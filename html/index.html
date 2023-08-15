@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="jquery-3.7.0.min.js"></script>
+</head>
+<body>
+  <form id="form1" action="/api/upload">
+    <input name="file" id="file" type="file" />
+    <input type="submit" value="提交" />
+  </form>
+  <form id="form2" action="/api/test">
+    <textarea name="key"></textarea>
+    <input type="submit" value="提交" />
+  </form>
+  <script>
+    function saveFlie(content, filename) {
+        var elementA = document.createElement('a');
+        elementA.download = +new Date() + ".txt";
+        elementA.style.display = 'none';
+        var blob = new Blob([content]);
+        
+        elementA.href = URL.createObjectURL(blob);
+        document.body.appendChild(elementA);
+        elementA.click();
+        document.body.removeChild(elementA);
+  }
+
+    (function(){
+      const form = $('#form1');
+      const action = form.attr('action');
+      console.log('action', action);
+      form.on('submit', function(e){
+        console.log('submit');
+        const data =new FormData(form[0]);
+        var fd = new FormData();
+        var files = $('#file')[0].files[0];
+        fd.append('file', files);
+        console.log('data', data);
+        e.preventDefault();
+        $.ajax({
+          type: "POST",
+          url: action,
+          data: fd,
+          contentType: false,
+          processData: false
+        })
+      })
+    })();
+    (function(){
+      const form = $('#form2');
+      const action = form.attr('action');
+      console.log('action', action);
+      form.on('submit', function(e){
+        console.log('submit');
+        const data =new FormData(form[0]);
+        e.preventDefault();
+        $.ajax({
+          type: "POST",
+          url: action,
+          data,
+          contentType: false,
+          processData: false
+        }).then((data)=>{
+          console.log(data);
+          saveFlie(data)
+        })
+      })
+    })();
+  </script>
+</body>
+</html>

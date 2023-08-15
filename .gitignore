@@ -1,0 +1,3 @@
+node_modules
+.log
+nginx_logs
